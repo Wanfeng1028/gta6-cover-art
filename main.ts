@@ -1,49 +1,36 @@
-// Neon Dusk Cover Maker — the program that hands the entry in.
-// Node 22, standard library only. It copies this repository's app/ and
-// screenshots/ into the output directory and writes /output/dossier.json
-// with the vendored make.fun library, so the judge can read the entry.
-//
-// Serve the app locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// Neon Dusk Cover Maker: the entry program. It copies the app and its
+// screenshots into the output directory and writes dossier.json there with
+// buildDossier from vendor/makefun-app.ts. Standard library only, Node 22.
+//   MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { buildDossier } from './vendor/makefun-app.ts';
+import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { buildDossier } from "./vendor/makefun-app.ts";
 
-// The scorer's own caps (its gate.json): only text_max_bytes shapes the
-// dossier bytes; the others refuse an entry the scorer would refuse — more
-// than 4 screenshots or one over 256 KiB; more than 993 files in app/ or
-// 48 MiB of app files in all, or a path under app/ over 1000 bytes.
+const REPO_ROOT = dirname(fileURLToPath(import.meta.url));
+const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR || "/output";
+
 const CAPS = {
   text_max_bytes: 163840,
   screenshots: { max: 4, max_bytes: 262144 },
   app_max_files: 993,
-  app_max_bytes: 50331648,
+  app_max_bytes: 48 * 1024 * 1024,
   app_path_max_bytes: 1000,
 };
 
-function handIn(repoDir, outDir) {
-  // Start from a clean output directory so a stale file from an earlier
-  // run can never ride along with this entry.
-  rmSync(outDir, { recursive: true, force: true });
-  mkdirSync(outDir, { recursive: true });
-
-  cpSync(join(repoDir, 'app'), join(outDir, 'app'), { recursive: true });
-
-  const shots = join(repoDir, 'screenshots');
-  mkdirSync(join(outDir, 'screenshots'), { recursive: true });
-  if (existsSync(shots)) {
-    cpSync(shots, join(outDir, 'screenshots'), { recursive: true });
-  }
-
-  const dossier = buildDossier(outDir, CAPS);
-  writeFileSync(join(outDir, 'dossier.json'), dossier);
-  return dossier;
+function freshDir(path) {
+  if (existsSync(path)) rmSync(path, { recursive: true, force: true });
+  mkdirSync(path, { recursive: true });
 }
 
-const repoDir = fileURLToPath(new URL('.', import.meta.url));
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-const dossier = handIn(repoDir, outDir);
-console.log(`handed in ${outDir} (${dossier.length} bytes of dossier)`);
+mkdirSync(OUTPUT_DIR, { recursive: true });
+freshDir(join(OUTPUT_DIR, "app"));
+freshDir(join(OUTPUT_DIR, "screenshots"));
+cpSync(join(REPO_ROOT, "app"), join(OUTPUT_DIR, "app"), { recursive: true });
+cpSync(join(REPO_ROOT, "screenshots"), join(OUTPUT_DIR, "screenshots"), { recursive: true });
+
+const dossier = buildDossier(OUTPUT_DIR, CAPS);
+writeFileSync(join(OUTPUT_DIR, "dossier.json"), dossier);
+
+console.log("Neon Dusk dossier written: " + dossier.length + " bytes -> " + join(OUTPUT_DIR, "dossier.json"));

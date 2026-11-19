@@ -4,97 +4,81 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Neon Dusk Cover Maker</title>
+<link rel="preload" href="fonts/Anton-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">
-    <span class="brand-mark" aria-hidden="true"></span>
-    <span class="brand-name">Neon Dusk Cover Maker</span>
-  </div>
-  <p class="brand-tag">Turn any photo into a Vice City sunset poster.</p>
+  <h1 class="brand">Neon Dusk</h1>
+  <p class="tagline">Turn any photo into <strong>GTA-style cover art</strong> — right in your browser, no upload.</p>
 </header>
 
 <main class="workspace">
-  <section class="stage" aria-label="Cover preview">
-    <canvas id="cover" width="1080" height="1080"></canvas>
-    <p class="hint">Click a panel to select it, then drag the photo inside it to move it. Scroll over a panel to zoom.</p>
+  <section class="controls" aria-label="Cover controls">
+    <div class="group">
+      <span class="label">Photo</span>
+      <input id="photoFile" type="file" accept="image/*">
+      <div class="row">
+        <button id="samplePier" type="button">Sample: Pier dusk</button>
+        <button id="sampleBlvd" type="button">Sample: Boulevard</button>
+      </div>
+      <button id="fillAll" type="button">Use this photo in every panel</button>
+      <p class="hint">Click a panel in the preview to pick it, then drag the photo to move it and scroll to zoom it.</p>
+    </div>
+
+    <div class="group">
+      <span class="label">Layout</span>
+      <div class="row" id="layoutRow">
+        <button type="button" data-layout="split" aria-pressed="true">Split screen</button>
+        <button type="button" data-layout="triptych" aria-pressed="false">Triptych</button>
+        <button type="button" data-layout="hero" aria-pressed="false">Hero</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <span class="label">Caption</span>
+      <input id="titleText" type="text" value="NEON DUSK" maxlength="24" aria-label="Cover title">
+      <input id="subtitleText" type="text" value="VICE CITY NIGHTS" maxlength="40" aria-label="Cover subtitle">
+      <label class="switch"><input id="neonToggle" type="checkbox" checked> Neon glow on the title</label>
+    </div>
+
+    <div class="group">
+      <span class="label">Colour grade</span>
+      <select id="gradeSelect" aria-label="Colour grade">
+        <option value="sunset" selected>Sunset</option>
+        <option value="neon">Neon night</option>
+        <option value="teal">Teal dusk</option>
+        <option value="mono">Mono noir</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <span class="label">Zoom the selected panel</span>
+      <input id="zoomRange" type="range" min="1" max="2.5" step="0.05" value="1" aria-label="Zoom">
+    </div>
+
+    <div class="group">
+      <span class="label">Export size</span>
+      <select id="sizeSelect" aria-label="Export size">
+        <option value="square" selected>Square — 1080 x 1080</option>
+        <option value="portrait">Portrait — 1080 x 1350</option>
+        <option value="wide">Wide — 1920 x 1080</option>
+      </select>
+      <button id="exportBtn" class="primary" type="button">Export PNG</button>
+      <a id="downloadLink" class="download" href="#" download="neon-dusk-cover.png">Download the exported PNG</a>
+      <p id="statusText" class="status" role="status"></p>
+    </div>
   </section>
 
-  <aside class="panel" aria-label="Cover controls">
-    <section class="group">
-      <h2>1 · Photo</h2>
-      <div class="row">
-        <label class="file-btn" for="file-input">Choose photo…</label>
-        <input id="file-input" type="file" accept="image/*" hidden>
-        <button id="sample-pier" type="button">Sample: Pier</button>
-        <button id="sample-boulevard" type="button">Sample: Boulevard</button>
-      </div>
-      <p class="note">Photos are read on your machine only. They are never uploaded.</p>
-      <div class="row">
-        <button id="apply-all" type="button">Use in every panel</button>
-        <button id="clear-photo" type="button">Clear panel photo</button>
-      </div>
-    </section>
-
-    <section class="group">
-      <h2>2 · Layout</h2>
-      <div class="row" id="layout-row" role="group" aria-label="Layout">
-        <button type="button" data-layout="split" class="active">Split</button>
-        <button type="button" data-layout="triptych">Triptych</button>
-        <button type="button" data-layout="grid">Grid 2×2</button>
-        <button type="button" data-layout="hero">Hero</button>
-      </div>
-      <p class="note">Split and Triptych use 3 panels, Grid uses 4, Hero uses a big panel plus two small ones.</p>
-    </section>
-
-    <section class="group">
-      <h2>3 · Selected panel</h2>
-      <p class="note">Panel <strong id="panel-label">1</strong> of <span id="panel-count">3</span></p>
-      <label class="slider-label" for="zoom">Zoom <span id="zoom-value">1.00×</span></label>
-      <input id="zoom" type="range" min="1" max="3" step="0.01" value="1">
-      <div class="row">
-        <button id="zoom-out" type="button">−</button>
-        <button id="zoom-in" type="button">+</button>
-        <button id="reset-pan" type="button">Centre photo</button>
-      </div>
-    </section>
-
-    <section class="group">
-      <h2>4 · Words</h2>
-      <label class="field-label" for="title">Title</label>
-      <input id="title" type="text" value="NEON SUNSET" maxlength="48" autocomplete="off">
-      <label class="field-label" for="subtitle">Subtitle</label>
-      <input id="subtitle" type="text" value="ONE LAST RIDE" maxlength="64" autocomplete="off">
-    </section>
-
-    <section class="group">
-      <h2>5 · Colour grade</h2>
-      <div class="row" id="grade-row" role="group" aria-label="Colour grade">
-        <button type="button" data-grade="sunset" class="active">Sunset</button>
-        <button type="button" data-grade="neon">Neon</button>
-        <button type="button" data-grade="dusk">Dusk</button>
-        <button type="button" data-grade="original">Original</button>
-      </div>
-      <p class="note">Sunset is warm orange and pink, Neon is magenta and cyan, Dusk is violet. Original keeps your photo as it is.</p>
-    </section>
-
-    <section class="group">
-      <h2>6 · Export</h2>
-      <label class="field-label" for="size">Size</label>
-      <select id="size">
-        <option value="1080x1080" selected>1080 × 1080 — square post</option>
-        <option value="1080x1350">1080 × 1350 — portrait post</option>
-        <option value="1920x1080">1920 × 1080 — wide post</option>
-      </select>
-      <button id="export" type="button" class="export-btn">Export PNG</button>
-      <p class="note" id="export-status">Ready.</p>
-    </section>
-  </aside>
+  <section class="stage" aria-label="Cover preview">
+    <canvas id="coverCanvas" width="1080" height="1080"></canvas>
+    <p class="hint">Live preview — what you see is what the PNG gets. Panels: <span id="panelCount">2</span> · click a panel to select it.</p>
+  </section>
 </main>
 
 <footer class="foot">
-  <p>Original artwork drawn in your browser. No Rockstar logos, artwork or fonts. Fonts: Anton and Inter under the SIL Open Font License, files in app/fonts/.</p>
+  Neon Dusk Cover Maker — an original offline cover tool. Photos stay on your machine. Title font Anton and body font Inter, both under the SIL Open Font License.
 </footer>
 
 <script type="module" src="src/main.js"></script>
