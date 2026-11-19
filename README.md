@@ -1,8 +1,8 @@
 # Neon Dusk Cover Maker
 
-[![Built on make.fun](https://img.shields.io/badge/built%20on-make.fun-ff4d8d)](https://make.fun)
-[![Bounty: Make GTA 6 Cover Art](https://img.shields.io/badge/bounty-Make%20GTA%206%20Cover%20Art-7c3aed)](https://make.fun/c/gta6-cover-art-01)
-[![Prize $250](https://img.shields.io/badge/prize-%24250-22c55e)](https://make.fun/c/gta6-cover-art-01)
+[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/Wanfeng1028/gta6-cover-art/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/Wanfeng1028/gta6-cover-art/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
 Turn any photo into GTA-style multi-panel cover art, right in your browser. Pick a photo or a built-in sample, choose a layout, edit the neon caption, and export a share-ready PNG. Everything runs offline from static files — your photos never leave your machine.
 
