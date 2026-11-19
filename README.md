@@ -48,7 +48,7 @@ That writes `out/dossier.json` next to the copied `app/` and `screenshots/`.
 
 ## Licence
 
-MIT — see `LICENSE`. Fonts are under the SIL Open Font License, Version 1.1 (texts in `app/fonts/`).
+MIT — see `LICENSE`. Fonts are under the SIL Open Font License, Version 1.1 (full text in the Fonts section below).
 
 ## Fonts
 
